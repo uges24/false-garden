@@ -16,9 +16,7 @@ import {
     uTerrainSeed,
     uTerrainColor,
 } from '../core/shaders/uniforms';
-import { CosmicSystem } from './cosmic/CosmicSystem';
 import { Terrain } from './Terrain';
-import { StarrySky } from './background/StarrySky';
 import { useGameStore } from '../core/store/gameStore';
 import { AsyncCompile } from '@core';
 import Rose from './Rose/Rose';
@@ -26,6 +24,7 @@ import GrassWebGPU from './grass/GrassWebGPU';
 import { Character } from './character';
 import { GrassCullingDebug } from '../debug/GrassCullingDebug';
 import { MagicMarblePortal } from './marble/MagicMarblePortal';
+import { WaterSkyCeiling } from './water/WaterSkyCeiling';
 
 export function WorldController() {
     const setActiveTargets = useGameStore((state) => state.setActiveTargets);
@@ -123,8 +122,7 @@ export function WorldController() {
         {/* Environment - use group visibility to avoid remounting */}
         <Suspense fallback={null}>
             <group visible={enableEnv}>
-                <StarrySky />
-                <CosmicSystem />
+                <WaterSkyCeiling />
                 <Terrain />
             </group>
 
