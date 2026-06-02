@@ -9,7 +9,7 @@ export function Terrain() {
   const theme = worldThemes[mode];
 
   const geometry = useMemo(() => {
-    const geo = new THREE.PlaneGeometry(TERRAIN_SIZE, TERRAIN_SIZE, 160, 160);
+    const geo = new THREE.PlaneGeometry(TERRAIN_SIZE, TERRAIN_SIZE, 220, 220);
     geo.rotateX(-Math.PI / 2);
     const position = geo.attributes.position as THREE.BufferAttribute;
     for (let i = 0; i < position.count; i += 1) {

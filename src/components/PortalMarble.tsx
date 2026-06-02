@@ -18,6 +18,7 @@ export function PortalMarble({ portal, position, index }: Props) {
   const [hovered, setHovered] = useState(false);
   const mode = useWorldStore((state) => state.mode);
   const openPortal = useWorldStore((state) => state.openPortal);
+  const playerPosition = useWorldStore((state) => state.playerPosition);
   const theme = worldThemes[mode];
   const material = useMemo(
     () =>
@@ -71,18 +72,21 @@ export function PortalMarble({ portal, position, index }: Props) {
   useFrame(({ clock }) => {
     if (!groupRef.current) return;
     const t = clock.elapsedTime + index * 0.7;
-    const target = hovered ? 1.45 : 1 + Math.sin(t * 1.6) * 0.06;
+    const dx = playerPosition[0] - position[0];
+    const dz = playerPosition[2] - position[2];
+    const approach = 1 - THREE.MathUtils.smoothstep(Math.hypot(dx, dz), 6, 22);
+    const target = hovered ? 1.45 : 1 + Math.sin(t * 1.6) * 0.06 + approach * 0.22;
     groupRef.current.scale.lerp(new THREE.Vector3(target, target, target), 0.12);
     groupRef.current.position.y = position[1] + Math.sin(t) * 0.08;
     if (materialRef.current) {
       materialRef.current.uniforms.uTime.value = clock.elapsedTime + index * 0.8;
       materialRef.current.uniforms.uGlow.value.set(theme.marbleGlow);
-      materialRef.current.uniforms.uHover.value = THREE.MathUtils.lerp(materialRef.current.uniforms.uHover.value, hovered ? 1 : 0, 0.12);
+      materialRef.current.uniforms.uHover.value = THREE.MathUtils.lerp(materialRef.current.uniforms.uHover.value, hovered ? 1 : approach, 0.12);
     }
     if (ringRef.current) {
       const s = 1.4 + ((t * 0.35) % 1) * 2.2;
       ringRef.current.scale.set(s, s, s);
-      (ringRef.current.material as THREE.MeshBasicMaterial).opacity = hovered ? 0.28 : 0.1;
+      (ringRef.current.material as THREE.MeshBasicMaterial).opacity = hovered ? 0.28 : 0.1 + approach * 0.16;
     }
   });
 

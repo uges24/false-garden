@@ -15,7 +15,7 @@ export function MarbleSystem() {
   return (
     <group>
       {portals.map((portal, index) => (
-        <PortalMarble key={`${portal.id}-${seed}`} portal={portal} position={sampledPosition(seed, index)} index={index} />
+        <PortalMarble key={`${portal.id}-${seed}`} portal={portal} position={sampledPosition(seed, index, 145)} index={index} />
       ))}
     </group>
   );

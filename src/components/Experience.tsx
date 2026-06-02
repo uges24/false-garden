@@ -15,6 +15,7 @@ import { SnakeSystem } from './SnakeSystem';
 import { CameraRig } from './CameraRig';
 import { FloatingFragments } from './FloatingFragments';
 import { AtmosphereParticles } from './AtmosphereParticles';
+import { SingularityFragments } from './SingularityFragments';
 
 export function Experience() {
   const mode = useWorldStore((state) => state.mode);
@@ -22,7 +23,7 @@ export function Experience() {
 
   return (
     <Canvas
-      camera={{ position: [0, 9, 28], fov: 50, near: 0.1, far: 220 }}
+      camera={{ position: [0, 7, 22], fov: 48, near: 0.08, far: 520 }}
       gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
       dpr={[1, 1.75]}
       shadows
@@ -48,6 +49,7 @@ export function Experience() {
       <GrassField />
       <SnakeSystem />
       <AtmosphereParticles />
+      <SingularityFragments />
       <EnergyBeams />
       <FloatingFragments />
       <MarbleSystem />

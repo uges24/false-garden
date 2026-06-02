@@ -12,11 +12,11 @@ export function AtmosphereParticles() {
 
   const geometry = useMemo(() => {
     const random = seededRandom(219);
-    const positions = new Float32Array(240 * 3);
-    for (let i = 0; i < 240; i += 1) {
-      positions[i * 3] = (random() - 0.5) * 95;
-      positions[i * 3 + 1] = 1 + random() * 20;
-      positions[i * 3 + 2] = (random() - 0.5) * 95;
+    const positions = new Float32Array(420 * 3);
+    for (let i = 0; i < 420; i += 1) {
+      positions[i * 3] = (random() - 0.5) * 180;
+      positions[i * 3 + 1] = 1 + random() * 32;
+      positions[i * 3 + 2] = (random() - 0.5) * 180;
     }
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -25,13 +25,14 @@ export function AtmosphereParticles() {
 
   useFrame(({ clock }) => {
     if (!pointsRef.current) return;
-    pointsRef.current.rotation.y = clock.elapsedTime * 0.008;
+    pointsRef.current.rotation.y = clock.elapsedTime * 0.014;
+    pointsRef.current.rotation.z = Math.sin(clock.elapsedTime * 0.08) * 0.025;
     pointsRef.current.position.y = Math.sin(clock.elapsedTime * 0.17) * 0.25;
   });
 
   return (
     <points ref={pointsRef} geometry={geometry}>
-      <pointsMaterial color={theme.grassTip} size={0.12} transparent opacity={0.24} depthWrite={false} blending={THREE.AdditiveBlending} />
+      <pointsMaterial color={theme.grassTip} size={0.14} transparent opacity={0.22} depthWrite={false} blending={THREE.AdditiveBlending} />
     </points>
   );
 }

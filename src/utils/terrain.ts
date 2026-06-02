@@ -1,4 +1,6 @@
-export const TERRAIN_SIZE = 150;
+export const TERRAIN_SIZE = 900;
+export const GRASS_FIELD_SIZE = 220;
+export const GRASS_SNAP_SIZE = 18;
 
 export function terrainHeight(x: number, z: number) {
   const broad = Math.sin(x * 0.055) * Math.cos(z * 0.047) * 2.4;

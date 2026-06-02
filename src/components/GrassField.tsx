@@ -1,8 +1,8 @@
 import { useFrame } from '@react-three/fiber';
-import { useLayoutEffect, useMemo, useRef } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { useWorldStore } from '../store/worldStore';
-import { TERRAIN_SIZE, seededRandom, terrainHeight } from '../utils/terrain';
+import { GRASS_FIELD_SIZE, GRASS_SNAP_SIZE, seededRandom, terrainHeight } from '../utils/terrain';
 import { worldThemes } from '../utils/theme';
 
 const dummy = new THREE.Object3D();
@@ -13,7 +13,8 @@ export function GrassField() {
   const mode = useWorldStore((state) => state.mode);
   const performanceMode = useWorldStore((state) => state.performanceMode);
   const theme = worldThemes[mode];
-  const count = performanceMode ? 6200 : 14500;
+  const count = performanceMode ? 12000 : 34000;
+  const snapRef = useRef({ x: Number.NaN, z: Number.NaN });
 
   const geometry = useMemo(() => {
     const geo = new THREE.PlaneGeometry(0.18, 1.12, 1, 6);
@@ -80,16 +81,16 @@ export function GrassField() {
     [],
   );
 
-  useLayoutEffect(() => {
-    const random = seededRandom(performanceMode ? 31 : 19);
+  const rebuildGrass = useCallback((snapX: number, snapZ: number, playerX: number, playerZ: number) => {
+    const random = seededRandom((performanceMode ? 31 : 19) + snapX * 3 + snapZ * 7);
     for (let i = 0; i < count; i += 1) {
       const foreground = random() < 0.24;
       const clustered = random() < 0.36;
-      let x = (random() - 0.5) * TERRAIN_SIZE;
-      let z = (random() - 0.5) * TERRAIN_SIZE;
+      let x = snapX + (random() - 0.5) * GRASS_FIELD_SIZE;
+      let z = snapZ + (random() - 0.5) * GRASS_FIELD_SIZE;
       if (foreground) {
-        x = (random() - 0.5) * 38;
-        z = 7 + random() * 28;
+        x = playerX + (random() - 0.5) * 42;
+        z = playerZ + 5 + random() * 34;
       } else if (clustered) {
         x = Math.round(x / 9) * 9 + (random() - 0.5) * 4.2;
         z = Math.round(z / 9) * 9 + (random() - 0.5) * 4.2;
@@ -108,12 +109,27 @@ export function GrassField() {
     }
   }, [count, performanceMode]);
 
+  useLayoutEffect(() => {
+    const [playerX, , playerZ] = useWorldStore.getState().playerPosition;
+    const snapX = Math.floor(playerX / GRASS_SNAP_SIZE) * GRASS_SNAP_SIZE;
+    const snapZ = Math.floor(playerZ / GRASS_SNAP_SIZE) * GRASS_SNAP_SIZE;
+    snapRef.current = { x: snapX, z: snapZ };
+    rebuildGrass(snapX, snapZ, playerX, playerZ);
+  }, [rebuildGrass]);
+
   useFrame(({ clock }) => {
     if (!materialRef.current) return;
     materialRef.current.uniforms.uTime.value = clock.elapsedTime;
     materialRef.current.uniforms.uBase.value.set(theme.grassA);
     materialRef.current.uniforms.uMid.value.set(theme.grassB);
     materialRef.current.uniforms.uTip.value.set(theme.grassTip);
+    const [playerX, , playerZ] = useWorldStore.getState().playerPosition;
+    const snapX = Math.floor(playerX / GRASS_SNAP_SIZE) * GRASS_SNAP_SIZE;
+    const snapZ = Math.floor(playerZ / GRASS_SNAP_SIZE) * GRASS_SNAP_SIZE;
+    if (snapX !== snapRef.current.x || snapZ !== snapRef.current.z) {
+      snapRef.current = { x: snapX, z: snapZ };
+      rebuildGrass(snapX, snapZ, playerX, playerZ);
+    }
   });
 
   return (
