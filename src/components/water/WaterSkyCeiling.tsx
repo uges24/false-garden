@@ -1,35 +1,10 @@
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { useMemo, useRef } from 'react';
 import * as THREE from 'three/webgpu';
-import { WaterMesh } from 'three/examples/jsm/objects/WaterMesh.js';
 import { uGlobalHueShift, uTerrainColor } from '../../core/shaders/uniforms';
 
-const sunDirection = new THREE.Vector3(-0.32, 0.82, 0.48).normalize();
 const sunPosition: [number, number, number] = [-24, 46, -38];
 const waterHeight = 31;
-
-function createWaterNormals() {
-  const size = 256;
-  const data = new Uint8Array(size * size * 4);
-
-  for (let y = 0; y < size; y += 1) {
-    for (let x = 0; x < size; x += 1) {
-      const i = (y * size + x) * 4;
-      const sx = Math.sin(x * 0.11) + Math.sin((x + y) * 0.037) * 0.65;
-      const sy = Math.cos(y * 0.1) + Math.sin((x - y) * 0.041) * 0.55;
-      data[i] = 128 + sx * 48;
-      data[i + 1] = 128 + sy * 48;
-      data[i + 2] = 220;
-      data[i + 3] = 255;
-    }
-  }
-
-  const texture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
-  texture.needsUpdate = true;
-  return texture;
-}
 
 function createGlowTexture() {
   const size = 256;
@@ -47,6 +22,49 @@ function createGlowTexture() {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
+function createWaterVeilTexture() {
+  const size = 512;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const context = canvas.getContext('2d')!;
+
+  context.fillStyle = '#0a5f66';
+  context.fillRect(0, 0, size, size);
+
+  for (let i = 0; i < 46; i += 1) {
+    const x = Math.random() * size;
+    const y = Math.random() * size;
+    const radius = 28 + Math.random() * 120;
+    const gradient = context.createRadialGradient(x, y, 0, x, y, radius);
+    gradient.addColorStop(0, `rgba(${150 + Math.random() * 80},255,238,${0.05 + Math.random() * 0.1})`);
+    gradient.addColorStop(0.45, 'rgba(68,205,200,0.035)');
+    gradient.addColorStop(1, 'rgba(4,44,54,0)');
+    context.fillStyle = gradient;
+    context.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+  }
+
+  context.globalCompositeOperation = 'screen';
+  for (let i = 0; i < 34; i += 1) {
+    context.beginPath();
+    context.strokeStyle = `rgba(202,255,238,${0.035 + Math.random() * 0.05})`;
+    context.lineWidth = 1 + Math.random() * 2.5;
+    const y = Math.random() * size;
+    context.moveTo(-40, y);
+    for (let x = -40; x < size + 80; x += 36) {
+      context.lineTo(x, y + Math.sin(x * 0.025 + i) * (9 + Math.random() * 18));
+    }
+    context.stroke();
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(3.4, 3.4);
   return texture;
 }
 
@@ -125,34 +143,30 @@ function CausticShafts() {
 }
 
 export function WaterSkyCeiling() {
-  const waterRef = useRef<WaterMesh | null>(null);
+  const { scene } = useThree();
+  const waterRef = useRef<THREE.Mesh>(null);
   const glowRef = useRef<THREE.SpriteMaterial>(null);
-  const waterNormals = useMemo(() => createWaterNormals(), []);
+  const waterVeil = useMemo(() => createWaterVeilTexture(), []);
   const glowTexture = useMemo(() => createGlowTexture(), []);
-  const water = useMemo(() => {
-    const mesh = new WaterMesh(new THREE.PlaneGeometry(360, 360, 96, 96), {
-      waterNormals,
-      alpha: 0.86,
-      size: 2.1,
-      sunColor: '#fff0bf',
-      sunDirection,
-      waterColor: '#0b706e',
-      distortionScale: 18,
-      resolutionScale: 0.45,
-    });
-    mesh.material.side = THREE.DoubleSide;
-    mesh.rotation.x = -Math.PI / 2;
-    mesh.position.y = waterHeight;
-    return mesh;
-  }, [waterNormals]);
+  const backgroundColor = useMemo(() => new THREE.Color('#02171d'), []);
+  const fogColor = useMemo(() => new THREE.Color('#062c32'), []);
+  const fog = useMemo(() => new THREE.Fog(fogColor, 11, 92), [fogColor]);
 
   useFrame(({ clock }) => {
     const t = clock.elapsedTime;
+    scene.background = backgroundColor;
+    scene.fog = fog;
+
     if (waterRef.current) {
       waterRef.current.position.y = waterHeight + Math.sin(t * 0.12) * 0.22;
       waterRef.current.rotation.z = Math.sin(t * 0.035) * 0.018;
-      waterRef.current.size.value = 2.05 + Math.sin(t * 0.08) * 0.08;
-      waterRef.current.distortionScale.value = 17 + Math.sin(t * 0.11) * 1.8;
+      waterRef.current.scale.setScalar(1 + Math.sin(t * 0.08) * 0.012);
+    }
+    waterVeil.offset.set(t * 0.006, t * -0.004);
+    waterVeil.rotation = Math.sin(t * 0.035) * 0.018;
+    waterVeil.repeat.set(3.4 + Math.sin(t * 0.07) * 0.08, 3.4);
+    if (waterRef.current?.material instanceof THREE.MeshBasicMaterial) {
+      waterRef.current.material.opacity = 0.68 + Math.sin(t * 0.16) * 0.04;
     }
     if (glowRef.current) {
       glowRef.current.opacity = 0.48 + Math.sin(t * 0.35) * 0.05;
@@ -164,9 +178,18 @@ export function WaterSkyCeiling() {
 
   return (
     <group>
-      <color attach="background" args={['#02171d']} />
-      <fog attach="fog" args={['#062c32', 11, 92]} />
-      <primitive ref={waterRef} object={water} />
+      <mesh ref={waterRef} position={[0, waterHeight, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[360, 360, 96, 96]} />
+        <meshBasicMaterial
+          map={waterVeil}
+          color="#58d8d0"
+          transparent
+          opacity={0.68}
+          side={THREE.DoubleSide}
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
 
       <sprite position={sunPosition} scale={[23, 23, 1]}>
         <spriteMaterial ref={glowRef} map={glowTexture} color="#ffe8b4" transparent opacity={0.48} depthWrite={false} blending={THREE.AdditiveBlending} />
