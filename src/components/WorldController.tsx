@@ -25,6 +25,7 @@ import Rose from './Rose/Rose';
 import GrassWebGPU from './grass/GrassWebGPU';
 import { Character } from './character';
 import { GrassCullingDebug } from '../debug/GrassCullingDebug';
+import { RenderedSunMoodObject } from './sun/RenderedSunMoodObject';
 
 export function WorldController() {
     const setActiveTargets = useGameStore((state) => state.setActiveTargets);
@@ -141,6 +142,8 @@ export function WorldController() {
             <AsyncCompile id="character" onReady={setComponentReady} debug={debugMode}>
                 <Character position={[0, 0, 0]} scale={1} visible={enableCharacter} />
             </AsyncCompile>
+
+            <RenderedSunMoodObject />
         </Suspense>
     </>
 }
