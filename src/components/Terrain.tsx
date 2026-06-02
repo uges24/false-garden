@@ -3,17 +3,21 @@ import { useMemo, useRef } from 'react'
 import { useThree } from '@react-three/fiber'
 import {
     Fn,
+    mix,
     vec3,
+    vec2,
     vec4,
     float,
     positionLocal,
     modelWorldMatrix,
     step,
     length,
+    smoothstep,
+    mx_fractal_noise_float,
 } from 'three/tsl'
 import { DEFAULT_GRASS_AREA_SIZE } from './grass/core/config'
 import { getTerrainHeight } from '../core/shaders/terrainHelpers'
-import { uTerrainAmp, uTerrainFreq, uTerrainSeed, uTerrainColor } from '../core/shaders/uniforms'
+import { uTerrainAmp, uTerrainFreq, uTerrainSeed, uTerrainColor, uTime } from '../core/shaders/uniforms'
 import { useGridSnapping } from '../core/utils/gridSnapping'
 
 
@@ -47,7 +51,34 @@ export function Terrain({
 
         const mat = new THREE.MeshBasicNodeMaterial()
         mat.side = THREE.DoubleSide
-        mat.colorNode = vec4(uTerrainColor, float(1.0))
+        mat.colorNode = Fn(() => {
+            const dist = length(positionLocal.xy)
+            const radius = float(grassAreaSize * 0.5)
+
+            const centerFade = float(1.0).sub(
+                smoothstep(radius.mul(0.3), radius, dist)
+            )
+
+            const causticUv = positionLocal.xy.mul(0.18)
+            const causticA = mx_fractal_noise_float(
+                causticUv.add(vec2(uTime.mul(0.08), uTime.mul(-0.06)))
+            ).add(1.0).mul(0.5)
+            const causticB = mx_fractal_noise_float(
+                causticUv.mul(1.9).add(vec2(uTime.mul(-0.12), uTime.mul(0.1)))
+            ).add(1.0).mul(0.5)
+
+            const shimmerMask = smoothstep(
+                float(0.58),
+                float(0.95),
+                causticA.mul(causticB).add(causticA.mul(0.25))
+            ).mul(centerFade)
+
+            const coolShimmer = vec3(0.12, 0.36, 0.34).mul(shimmerMask.mul(0.22))
+            const warmShimmer = vec3(0.24, 0.2, 0.12).mul(shimmerMask.mul(0.07))
+            const shimmerTint = mix(coolShimmer, warmShimmer, causticA)
+
+            return vec4(uTerrainColor.add(shimmerTint), float(1.0))
+        })()
         mat.alphaTest = 0.5
 
         mat.positionNode = Fn(() => {
