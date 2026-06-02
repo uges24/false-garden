@@ -8,7 +8,11 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "visual:capture:water-target": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/capture-water-target.ps1",
+    "visual:compare:water-target": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/compare-water-target.ps1",
+    "visual:check:water-target": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check-water-target-artifacts.ps1",
+    "visual:test:water-target": "node scripts/visual-test-water-target.mjs"
   },
   "devDependencies": {
     "@vitejs/plugin-basic-ssl": "^2.1.0",

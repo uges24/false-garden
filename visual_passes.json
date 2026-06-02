@@ -1,0 +1,93 @@
+{
+  "current_pass": "P1 composition",
+  "passes": [
+    {
+      "name": "P1 composition",
+      "goal": "Lock the target framing: low grass camera, centered marble, horizon, rough foreground grass, ruin/rock silhouettes, placeholder water ceiling, and placeholder sun position.",
+      "files_changed": [
+        "src/app/App.tsx",
+        "src/visual-target/WaterTargetHarness.tsx",
+        "docs/visual-targets/water-sky/p1-composition-current.png",
+        "docs/visual-targets/water-sky/p1-composition-comparison.png"
+      ],
+      "screenshot_path": "docs/visual-targets/water-sky/p1-composition-current.png",
+      "done_when": [
+        "Camera is low and grass-level.",
+        "Marble is centered in the lower foreground.",
+        "Horizon occupies the lower third similar to the target.",
+        "Grass and ruin silhouettes establish scale.",
+        "Water ceiling and sun are placeholders only."
+      ],
+      "fail_conditions": [
+        "Camera feels aerial or demo-like.",
+        "Marble is not centered near the target position.",
+        "Lower world is missing.",
+        "Final water, caustics, beams, particles, or postprocessing polish are implemented during P1."
+      ],
+      "status": "complete"
+    },
+    {
+      "name": "P2 terrain / grass / ruins scale",
+      "goal": "Match target grass density, terrain depth, rock masses, and ruin scale.",
+      "files_changed": [],
+      "screenshot_path": "docs/visual-targets/water-sky/p2-terrain-grass-ruins.png",
+      "done_when": ["Foreground and midground read like the target world scale."],
+      "fail_conditions": ["World still reads as placeholder silhouettes only."],
+      "status": "pending"
+    },
+    {
+      "name": "P3 real water ceiling",
+      "goal": "Replace placeholder ceiling with real rendered water geometry.",
+      "files_changed": [],
+      "screenshot_path": "docs/visual-targets/water-sky/p3-real-water-ceiling.png",
+      "done_when": ["Ceiling reads as dimensional overhead water."],
+      "fail_conditions": ["Ceiling reads as flat color, fog, or poster texture."],
+      "status": "pending"
+    },
+    {
+      "name": "P4 caustics / ripple detail",
+      "goal": "Add target-like caustic density, ripple detail, and specular linework.",
+      "files_changed": [],
+      "screenshot_path": "docs/visual-targets/water-sky/p4-caustics-ripples.png",
+      "done_when": ["Caustic pattern density and variation approaches the target."],
+      "fail_conditions": ["Uniform white line coverage or soft cloud blobs dominate."],
+      "status": "pending"
+    },
+    {
+      "name": "P5 sun-through-water distortion",
+      "goal": "Add warm sun source behind water with preserved shape and distortion.",
+      "files_changed": [],
+      "screenshot_path": "docs/visual-targets/water-sky/p5-sun-distortion.png",
+      "done_when": ["Sun is warm, centered high, and distorted through water."],
+      "fail_conditions": ["Sun is a flat white blob or plain disc."],
+      "status": "pending"
+    },
+    {
+      "name": "P6 volumetric beams",
+      "goal": "Add soft sun-aligned beams that widen downward and fade into mist.",
+      "files_changed": [],
+      "screenshot_path": "docs/visual-targets/water-sky/p6-volumetric-beams.png",
+      "done_when": ["Beams feel volumetric and connected to the sun."],
+      "fail_conditions": ["Beams look like grey triangles or unrelated overlays."],
+      "status": "pending"
+    },
+    {
+      "name": "P7 particles / mist",
+      "goal": "Add beam-aware dust/mist particles with target-like density and depth.",
+      "files_changed": [],
+      "screenshot_path": "docs/visual-targets/water-sky/p7-particles-mist.png",
+      "done_when": ["Particles cluster in beams and mist without glitter/confetti feel."],
+      "fail_conditions": ["Particles are evenly sprinkled or starfield-like."],
+      "status": "pending"
+    },
+    {
+      "name": "P8 postprocessing / color grade",
+      "goal": "Tune bloom, tone mapping, vignette, contrast, and final palette.",
+      "files_changed": [],
+      "screenshot_path": "docs/visual-targets/water-sky/p8-post-color.png",
+      "done_when": ["Final screenshot matches target mood without white washout."],
+      "fail_conditions": ["Color grade destroys contrast or target palette."],
+      "status": "pending"
+    }
+  ]
+}
