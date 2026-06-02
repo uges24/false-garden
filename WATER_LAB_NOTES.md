@@ -23,12 +23,13 @@ Because an exact console exception could not be captured, this branch does not s
 
 - camera below a real water mesh, looking upward
 - custom overhead water mesh with dense geometry
-- procedural FBM/noise animated normals with multiple scrolling layers
-- Fresnel shimmer, sun specular, and distorted sun-through-water shading
+- procedural FBM/noise animated normals with macro, mid, and high-frequency ripple layers
+- thin animated caustic linework and boundary highlights on the underside of the water
+- Fresnel shimmer, sharper sun specular, and distorted warm sun-through-water shading
 - sun and warm light above/behind the water
 - bloom/tone mapping/vignette-style postprocessing
-- soft additive volumetric shaft meshes aligned to the sun
-- shader-driven underwater dust points inspired by Sparkles
-- optional dark lower silhouettes for scale only
+- soft additive shader-plane light shafts aligned to the sun with noise breakup and vertical fade
+- shader-driven underwater dust points inspired by Sparkles, clustered into beam lanes with depth-scaled sizing
+- dark lower silhouettes for scale and foreground depth only
 
 No grass, character, marble, terrain, weather UI, starfield, galaxy, orbit/debug rings, or main-world systems are rendered on `/water-lab`.
