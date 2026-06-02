@@ -26,6 +26,7 @@ import GrassWebGPU from './grass/GrassWebGPU';
 import { Character } from './character';
 import { GrassCullingDebug } from '../debug/GrassCullingDebug';
 import { MagicMarblePortal } from './marble/MagicMarblePortal';
+import { CinematicGodSun } from './sun/CinematicGodSun';
 
 export function WorldController() {
     const setActiveTargets = useGameStore((state) => state.setActiveTargets);
@@ -144,6 +145,7 @@ export function WorldController() {
             </AsyncCompile>
 
             <MagicMarblePortal />
+            <CinematicGodSun />
         </Suspense>
     </>
 }
