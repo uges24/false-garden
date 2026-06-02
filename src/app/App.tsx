@@ -22,6 +22,7 @@ import { KTX2Preloader } from "@core";
 import { ROSE_TEXTURES } from "../components/Rose/core/config";
 import { BODY_TEXTURE_PATHS, DETAIL_TEXTURE_PATHS, MODEL_PATHS } from '../components/character/config';
 import { WaterLab } from "../water-lab/WaterLab";
+import { WaterCompositionLab } from "../water-lab/WaterCompositionLab";
 
 
 useLoader.preload(AudioLoader,
@@ -41,6 +42,10 @@ preloadVATAssets('/vat/RoseLowPoly_meta.json');
 export const BeamSceneContext = createContext<THREE.Scene | null>(null);
 
 export default function App() {
+    if (window.location.pathname === '/water-composition-lab') {
+        return <WaterCompositionLab />;
+    }
+
     if (window.location.pathname === '/water-lab') {
         return <WaterLab />;
     }
