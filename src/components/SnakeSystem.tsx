@@ -15,6 +15,7 @@ export function SnakeSystem() {
 
   useFrame(({ clock }) => {
     const t = clock.elapsedTime * 0.38;
+    const reveal = mode === 'Deep Night' || mode === 'Eclipse' ? 1 : 0.42;
     offsets.forEach((offset, i) => {
       const mesh = refs.current[i];
       if (!mesh) return;
@@ -25,8 +26,8 @@ export function SnakeSystem() {
       mesh.scale.setScalar(1 - offset * 0.55);
       mesh.rotation.y = -a;
       const material = mesh.material as THREE.MeshStandardMaterial;
-      material.emissiveIntensity = theme.snake * (0.18 + (1 - offset) * 0.55);
-      material.opacity = 0.22 + theme.snake * 0.28;
+      material.emissiveIntensity = reveal * theme.snake * (0.12 + (1 - offset) * 0.46);
+      material.opacity = 0.12 + reveal * theme.snake * 0.22;
     });
   });
 
@@ -36,13 +37,13 @@ export function SnakeSystem() {
         <mesh key={i} ref={(node) => { refs.current[i] = node; }} castShadow>
           <sphereGeometry args={[0.34, 16, 12]} />
           <meshStandardMaterial
-            color={i < 3 ? '#101314' : '#06352f'}
+            color={i < 3 ? '#080d0d' : '#032b28'}
             emissive={i % 2 ? '#56f8ff' : '#8a54ff'}
-            emissiveIntensity={0.2}
-            roughness={0.42}
-            metalness={0.05}
+            emissiveIntensity={0.08}
+            roughness={0.68}
+            metalness={0.12}
             transparent
-            opacity={0.4}
+            opacity={0.22}
           />
         </mesh>
       ))}

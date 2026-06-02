@@ -1,4 +1,3 @@
-import { Billboard, Html } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useRef } from 'react';
 import * as THREE from 'three';
@@ -7,6 +6,7 @@ import { worldThemes } from '../utils/theme';
 
 export function SunController() {
   const groupRef = useRef<THREE.Group>(null);
+  const haloRef = useRef<THREE.Group>(null);
   const mode = useWorldStore((state) => state.mode);
   const cycleMode = useWorldStore((state) => state.cycleMode);
   const theme = worldThemes[mode];
@@ -15,6 +15,9 @@ export function SunController() {
     if (!groupRef.current) return;
     const pulse = 1 + Math.sin(clock.elapsedTime * 1.1) * 0.035;
     groupRef.current.scale.setScalar(pulse);
+    if (haloRef.current) {
+      haloRef.current.rotation.z = clock.elapsedTime * 0.035;
+    }
   });
 
   return (
@@ -32,13 +35,20 @@ export function SunController() {
       ) : null}
       <mesh scale={1.45}>
         <sphereGeometry args={[3.2, 48, 48]} />
-        <meshBasicMaterial color={theme.sunCore} transparent opacity={0.13} blending={THREE.AdditiveBlending} />
+        <meshBasicMaterial color={theme.sunCore} transparent opacity={mode === 'Eclipse' ? 0.2 : 0.15} blending={THREE.AdditiveBlending} depthWrite={false} />
       </mesh>
-      <Billboard position={[0, -4.4, 0]}>
-        <Html center distanceFactor={22}>
-          <button className="sun-label">Shift sun</button>
-        </Html>
-      </Billboard>
+      <group ref={haloRef}>
+        {[4.6, 5.9, 7.8].map((radius, index) => (
+          <mesh key={radius} rotation={[Math.PI / 2, 0, index * 0.42]}>
+            <ringGeometry args={[radius, radius + 0.035, 128]} />
+            <meshBasicMaterial color={index % 2 ? theme.sun : theme.sunCore} transparent opacity={0.1 - index * 0.018} blending={THREE.AdditiveBlending} depthWrite={false} />
+          </mesh>
+        ))}
+      </group>
+      <mesh rotation={[0.2, 0.35, 0]} scale={[5.2, 0.028, 0.028]}>
+        <sphereGeometry args={[1, 16, 8]} />
+        <meshBasicMaterial color={theme.sunCore} transparent opacity={0.22} blending={THREE.AdditiveBlending} depthWrite={false} />
+      </mesh>
     </group>
   );
 }
