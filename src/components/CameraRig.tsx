@@ -10,14 +10,14 @@ export function CameraRig() {
   const orbitOffset = useMemo(() => new THREE.Vector3(), []);
 
   useFrame(({ clock }, delta) => {
-    const time = clock.elapsedTime * 0.085;
-    const radius = 14.5 + Math.sin(clock.elapsedTime * 0.11) * 1.25;
-    orbitOffset.set(Math.sin(time) * radius, 4.2 + pointer.y * 0.65, Math.cos(time) * radius + 9);
+    const time = -0.42 + Math.sin(clock.elapsedTime * 0.055) * 0.22;
+    const radius = 13 + Math.sin(clock.elapsedTime * 0.09) * 0.9;
+    orbitOffset.set(Math.sin(time) * radius, 2.35 + pointer.y * 0.38, Math.cos(time) * radius + 7.5);
 
-    desired.set(orbitOffset.x + pointer.x * 2.4, orbitOffset.y, orbitOffset.z);
-    camera.position.lerp(desired, 1 - Math.pow(0.025, delta));
+    desired.set(orbitOffset.x + pointer.x * 1.45, orbitOffset.y, orbitOffset.z);
+    camera.position.lerp(desired, 1 - Math.pow(0.04, delta));
 
-    lookAt.set(pointer.x * 1.2, 1.15 + pointer.y * 0.38, 0);
+    lookAt.set(pointer.x * 0.8, 0.95 + pointer.y * 0.22, -8);
     camera.lookAt(lookAt);
   });
 

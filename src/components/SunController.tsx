@@ -26,24 +26,24 @@ export function SunController() {
   });
 
   return (
-    <group ref={groupRef} position={[17, 24, -36]} onClick={cycleMode}>
-      <pointLight color={theme.sunCore} intensity={mode === 'Eclipse' ? 7 : 22} distance={115} />
+    <group ref={groupRef} position={[10, 15, -48]} onClick={cycleMode}>
+      <pointLight color={theme.sunCore} intensity={mode === 'Eclipse' ? 9 : 30} distance={130} />
       <mesh>
-        <sphereGeometry args={[3.35, 64, 64]} />
+        <sphereGeometry args={[4.15, 64, 64]} />
         <meshBasicMaterial color={theme.sun} />
       </mesh>
       {mode === 'Eclipse' ? (
         <mesh position={[0.45, 0.1, 0.35]}>
-          <sphereGeometry args={[2.84, 64, 64]} />
+          <sphereGeometry args={[3.6, 64, 64]} />
           <meshBasicMaterial color="#020207" />
         </mesh>
       ) : null}
       <mesh scale={1.75}>
-        <sphereGeometry args={[3.35, 48, 48]} />
-        <meshBasicMaterial color={theme.sunCore} transparent opacity={mode === 'Eclipse' ? 0.2 : 0.16} blending={THREE.AdditiveBlending} depthWrite={false} />
+        <sphereGeometry args={[4.15, 48, 48]} />
+        <meshBasicMaterial color={theme.sunCore} transparent opacity={mode === 'Eclipse' ? 0.28 : 0.2} blending={THREE.AdditiveBlending} depthWrite={false} />
       </mesh>
       <group ref={haloRef}>
-        {[4.8, 6.2, 8.4, 11.5].map((radius, index) => (
+        {[6.1, 8.4, 12.2, 17.5].map((radius, index) => (
           <mesh key={radius} rotation={[Math.PI / 2, 0, index * 0.34]}>
             <ringGeometry args={[radius, radius + 0.04 + index * 0.02, 128]} />
             <meshBasicMaterial

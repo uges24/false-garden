@@ -14,6 +14,8 @@ type Props = {
 export function PortalMarble({ portal, position, index }: Props) {
   const groupRef = useRef<THREE.Group>(null);
   const ringRef = useRef<THREE.Mesh>(null);
+  const portalRingRef = useRef<THREE.Mesh>(null);
+  const portalRingTwoRef = useRef<THREE.Mesh>(null);
   const pulseRef = useRef<THREE.Mesh>(null);
   const materialRef = useRef<THREE.ShaderMaterial>(null);
   const [hovered, setHovered] = useState(false);
@@ -90,6 +92,15 @@ export function PortalMarble({ portal, position, index }: Props) {
       ringRef.current.scale.set(s, s, s);
       (ringRef.current.material as THREE.MeshBasicMaterial).opacity = hovered ? 0.28 : 0.1;
     }
+    if (portalRingRef.current && portalRingTwoRef.current) {
+      portalRingRef.current.rotation.z = t * 0.28;
+      portalRingTwoRef.current.rotation.z = -t * 0.42;
+      const ringTarget = hovered ? 1.45 : 1;
+      portalRingRef.current.scale.lerp(new THREE.Vector3(ringTarget, ringTarget, ringTarget), 0.08);
+      portalRingTwoRef.current.scale.lerp(new THREE.Vector3(ringTarget * 0.92, ringTarget * 0.92, ringTarget * 0.92), 0.08);
+      (portalRingRef.current.material as THREE.MeshBasicMaterial).opacity = hovered ? 0.48 : 0.2;
+      (portalRingTwoRef.current.material as THREE.MeshBasicMaterial).opacity = hovered ? 0.34 : 0.14;
+    }
     if (pulseRef.current) {
       const mat = pulseRef.current.material as THREE.MeshBasicMaterial;
       pulseRef.current.scale.setScalar(1 + portalPulse * 8);
@@ -127,8 +138,16 @@ export function PortalMarble({ portal, position, index }: Props) {
       }}
     >
       <mesh castShadow>
-        <sphereGeometry args={[0.78, 40, 40]} />
+        <sphereGeometry args={[0.82, 56, 56]} />
         <primitive ref={materialRef} object={material} attach="material" />
+      </mesh>
+      <mesh ref={portalRingRef} rotation={[0.2, 0, 0]} scale={1.22}>
+        <torusGeometry args={[1.02, 0.035, 10, 96]} />
+        <meshBasicMaterial color="#78f8ff" transparent opacity={0.2} blending={THREE.AdditiveBlending} depthWrite={false} />
+      </mesh>
+      <mesh ref={portalRingTwoRef} rotation={[0.2, Math.PI / 2, 0]} scale={1.08}>
+        <torusGeometry args={[1.08, 0.025, 10, 96]} />
+        <meshBasicMaterial color="#ff5ee7" transparent opacity={0.14} blending={THREE.AdditiveBlending} depthWrite={false} />
       </mesh>
       <mesh scale={1.45}>
         <sphereGeometry args={[0.78, 32, 32]} />
