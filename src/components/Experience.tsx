@@ -19,7 +19,7 @@ export function Experience() {
 
   return (
     <Canvas
-      camera={{ position: [0, 9, 28], fov: 50, near: 0.1, far: 220 }}
+      camera={{ position: [0, 4.2, 22], fov: 45, near: 0.1, far: 220 }}
       gl={{ antialias: true, alpha: false }}
       dpr={[1, 1.75]}
       shadows

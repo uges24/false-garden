@@ -6,7 +6,7 @@ export function Player() {
 
   return (
     <Float speed={1.2} floatIntensity={0.04} rotationIntensity={0.06}>
-      <group position={[0, y, 0]} scale={0.62}>
+      <group position={[0, y, 0]} scale={0.48}>
         <mesh castShadow position={[0, 1.25, 0]}>
           <capsuleGeometry args={[0.22, 0.72, 8, 14]} />
           <meshStandardMaterial color="#080b10" roughness={0.55} metalness={0.25} />
