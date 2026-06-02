@@ -33,3 +33,20 @@ Because an exact console exception could not be captured, this branch does not s
 - dark lower silhouettes for scale and foreground depth only
 
 No grass, character, marble, terrain, weather UI, starfield, galaxy, orbit/debug rings, or main-world systems are rendered on `/water-lab`.
+
+## Composition Lab
+
+`/water-composition-lab` is a separate cinematic composition pass built from the `/water-lab` shader direction. It does not modify the main False Garden route.
+
+The route adds:
+
+- low camera near grass height, looking slightly upward
+- dark grass/terrain silhouettes occupying the lower frame for scale
+- water ceiling dominating the upper frame
+- off-center warm sun source behind the water shader
+- foreground magical orb for scale
+- soft mist layers between ground and water
+- sun-aligned shaft planes with noise breakup
+- beam-clustered underwater particles
+
+This route exists to judge whether the water sky works above a False Garden-style world before integrating anything into the main scene.
